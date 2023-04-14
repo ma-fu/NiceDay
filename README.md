@@ -1,2 +1,2 @@
 # NiceDay
-This is just Sqlite3
+These are just SQLite3 and python3
