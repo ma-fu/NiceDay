@@ -1,37 +1,38 @@
 import sqlite3, os
 
+from ISql import isSQLite3
 
-def isSQLite3(filename):
-	isfile, getsize = os.path.isfile,\
-os.path.getsize
-	if not isfile(filename):
-		return False
-	if getsize(filename) < 100:
-		return False
-	with open(filename,"rb") as fd:
-		header = fd.read(100)[:16]
-		b16 = b"SQLite format 3\x00"
-	return header == b16
+ask_file  = "db name:"
 
+db_name = input(ask_file)
 
-# some string values here
-input_call = "!!! Call your db !!! \n:"
-db_name = input(input_call)
-print_connect = "Your db is %s\n"\
-"...Connecting" %(db_name)
-print_wrong_db = "Your db is not exists"\
-"\nPlease place db same with sqlite.py"
+yes_file = "Successfuly connect %s!\n" % (db_name) 
 
-cwd = os.listdir()
-if db_name in cwd:
-	print(print_connect)
+no_file = "%s is not SQLite3" % (db_name)
+
+if isSQLite3(db_name):
+
+	print(yes_file)
+
 else:
-	print(print_wrong_db)
+
+	print(no_file)
+
 	exit()
 
 # connect sqlite3 module
+
+which_table = "Which table?\n"\
+\
+
+
+print(which_table)
+
+"""
 con = sqlite3.connect(db_name)
+
 cur = con.cursor()
+"""
 
 	
 
