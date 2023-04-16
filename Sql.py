@@ -1,6 +1,11 @@
 import sqlite3, os
 
+import pandas as pd
+
 from ISql import isSQLite3
+
+from tabulate import tabulate
+
 
 ask_file  = "db name:"
 
@@ -20,19 +25,36 @@ else:
 
 	exit()
 
-# connect sqlite3 module
 
-which_table = "Which table?\n"\
+# Display tables 
+
+which_table = "Which table?:"
+
+que = "select name from sqlite_master"\
 \
+" where type = 'table';"
+
+with sqlite3.connect(db_name) as con:
+
+	df = pd.read_sql(que,con)
+
+columns = df.columns.values
+
+fmt = "psql"
+
+fm_sql = tabulate(df,headers=columns,tablefmt=fmt)
+
+print(fm_sql)
 
 
-print(which_table)
+# Select table
 
-"""
-con = sqlite3.connect(db_name)
+ask_table = input(which_table)
 
-cur = con.cursor()
-"""
+print(ask_table)
+
+# Test
+
 
 	
 
