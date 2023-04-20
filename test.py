@@ -11,6 +11,22 @@ clms = df.columns.values
 fmt = "psql"
 
 res = tabl(df,headers=clms,tablefmt=fmt)
-
+"""
 if __name__ == "__main__":
-	print(res)
+	idxs = list(map(str,df.index))
+	order = None
+	key = None
+	while order not in idxs:
+		print(res)
+		print("exit :q")
+		order = input("How can I help you?:")
+		while key != "test": 
+			key = input("help me")
+			if key =="q":
+				break
+		if order == "q":
+			print("phew I get out loop")
+	
+"""
+
+print(list(res.index))

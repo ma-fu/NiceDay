@@ -1,2 +1,8 @@
-# NiceDay
-These are just SQLite3 and python3
+# sql tables from python
+
+pip install -r requirements.txt
+
+python3 sql.py
+
+
+
