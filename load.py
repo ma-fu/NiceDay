@@ -9,7 +9,7 @@ model = Model(db_name)
 
 if model.isSQLite3():
 
-	print("Successfuly connect %s!\n" % (db_name))
+	print("Successfuly connect %s!" % (db_name))
 
 else:
 
@@ -19,9 +19,27 @@ else:
 
 # Display tables 
 
-df = model.get_tbls_df()
+tbls_df = model.df_tbls()
 
-model.loop_main(df)
+# convert integer to string in list
+
+tbls_idx = list(map(str, tbls_df.index))
+
+order = None
+
+while order !="q":
+	model.disp_sql(tbls_df)
+	print("\texit:q")
+# Display table data 
+# get id user would like
+	idx = model.req_tbls_id(tbls_idx)
+	tbl_name = model.tbl_from_idx(idx)
+	tbl_df = model.df_from_tbl(tbl_name)
+	model.disp_sql(tbl_df)
+	order = input("Continue?")
+
+
+
 
 
 
