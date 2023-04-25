@@ -14,25 +14,42 @@ else:
 tbls_df = model.df_tbls()
 
 # Display table data 
-tbls_idx = list(map(str, tbls_df.index))
+tbl_ids = list(map(str, tbls_df.index))
 order = None
+tbl_id = None
 while order !="q":
 	if order is None or order=="t":
 		model.disp_sql(tbls_df,idx=True)
-	print("\texit:q")
+	
+	if order=="i":
+		order = tbl_id
+		data = model.req_ins_data(tbl_df)
+		data["tbl"] = tbl_nam
+		clms,esc,vls,tbl = data 
+		q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],data[esc])
+		print(q)
+		print(data[vls])
+		yn = input("Would you like to save?(y/n)")
+		if yn =="y":
+			print("saving")
+			model.insert_data(data)
+		else:
+			print("bye")
 
-	if order not in tbls_idx:
-		tbl_idx = model.req_tbl_id(tbls_idx) 
+	if order not in tbl_ids:
+		tbl_id = model.req_tbl_id(tbl_ids) 
 	else:
-		tbl_idx = order
+		tbl_id = order
 
-	if tbl_idx != "q":
-		tbl_name = model.tbl_from_idx(tbl_idx)
-		tbl_df = model.df_from_tbl(tbl_name)
+	if tbl_id != "q":
+		tbl_nam = model.tbl_from_id(tbl_id)
+		tbl_df = model.df_from_tbl(tbl_nam)
 		model.disp_sql(tbl_df)
+		print("\tinsert:i")
 		
-	print("\ttbls:t\texit:q\ttbls_id:")
+	print("\ttbls:t\texit:q\ttbl_id:")
 	order = input("Continue?")
+	
 
 
 
