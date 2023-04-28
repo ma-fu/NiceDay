@@ -30,10 +30,10 @@ class Model:
 			sel_all = "select * from %s" % (tbl_name)
 		return pd.read_sql(sel_all,db)
 
-
-	def insert_data(self,data):
-		clms,esc,vls,tbl = data
-		q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],data[esc])
+	def Inserter(self,data):
+		clms,vls,tbl = data
+		esc = re.sub("[\w|\d]*[^,]","?",data[clms])
+		q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],esc)
 		with sqlite3.connect(self.db) as db:
 			cur = db.cursor()
 			cur.execute(q,data[vls])	
@@ -56,7 +56,7 @@ class Model:
 
 class Asker(Model):
 
-	def req_tbl_id(self,idxs):
+	def ask_tbl_id(self,idxs):
 		order = None
 		while order != "q": 
 			order = input("Type table num:")
@@ -64,7 +64,7 @@ class Asker(Model):
 				break
 		return order
 	
-	def req_ins_data(self,df):
+	def ask_ins_data(self,df):
 		clms_str = ""
 		usr_vl = [] 
 		for cl in df.columns:
@@ -82,11 +82,7 @@ class Asker(Model):
 				vl = input("%s:" % cl)
 				clms_str += cl+","
 				usr_vl.append(vl)
-		esc = re.sub("[\w|\d]*[^,]","?",clms_str)
-		print(esc)
-		return {"clms":clms_str[:-1],"esc":esc[:-1],"vls":usr_vl}
-
-
+		return {"clms":clms_str[:-1],"vls":usr_vl}
 		
 if __name__ == "__main__":
 	pass

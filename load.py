@@ -1,41 +1,40 @@
-from sql import Asker
 
 def tbl_info(tbl_id):
-	tbl_nam = model.tbl_name(tbl_id)
-	tbl_df = model.tbl_df(tbl_nam)
-	model.disp_sql(tbl_df)
+	tbl_nam = asker.tbl_name(tbl_id)
+	tbl_df = asker.tbl_df(tbl_nam)
+	asker.disp_sql(tbl_df)
 	print("\tinsert:i")
 	return tbl_nam, tbl_df
 
 def case_insert(tbl_df):
-	data = model.req_ins_data(tbl_df)
+	data = asker.ask_ins_data(tbl_df)
 	data["tbl"] = tbl_nam
-	clms,esc,vls,tbl = data 
-	q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],data[esc])
-	print(data[vls])
+	clms,vls,tbl = data 
+	q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],data[vls])
 	return data
 	
 def confirm_ins(data):
 	yn = input("Would you like to save?(y/n)")
 	if yn =="y":
 		print("Saving")
-		model.insert_data(data)
+		asker.Inserter(data)
 	else:
 		print("Bye")
-	
 
+from sql import Asker
+	
 ask_file  = "db name:"
 db_name = input(ask_file)
 
-model = Asker(db_name)
+asker = Asker(db_name)
 
-if model.isSQLite3():
+if asker.isSQLite3():
 	print("Successfuly connect %s!" % (db_name))
 else:
 	print("%s is not SQLite3" % (db_name))
 	exit()
 
-tbls_df = model.tbls_df()
+tbls_df = asker.tbls_df()
 
 # Display table data or some operations 
 tbl_ids = list(map(str, tbls_df.index))
@@ -44,7 +43,7 @@ tbl_id = None
 while order !="q":
 	# First time or typed 't'
 	if order is None or order=="t":
-		model.disp_sql(tbls_df,idx=True)
+		asker.disp_sql(tbls_df,idx=True)
 
 	# Insert mode	
 	if order=="i":
@@ -54,7 +53,7 @@ while order !="q":
 
 	# Usr value not in tble menu
 	if order not in tbl_ids:
-		tbl_id = model.req_tbl_id(tbl_ids) 
+		tbl_id = asker.ask_tbl_id(tbl_ids) 
 	else:
 		tbl_id = order
 	
@@ -65,14 +64,3 @@ while order !="q":
 	print("\ttbls:t\texit:q\ttbl_id:")
 	order = input("Continue?")
 	
-
-
-
-
-
-
-
-
-
-	
-
