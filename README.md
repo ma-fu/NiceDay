@@ -1,4 +1,4 @@
-# sql tables from python
+# SQLite3 Python table explore 
 
 pip install -r requirements.txt
 
