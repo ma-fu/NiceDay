@@ -3,6 +3,9 @@ from Pyobs.sql import Asker
 ask_file  = "Your Sqlite3 here:"
 db_name = input(ask_file)
 
+if db_name=="":
+	db_name = "2023.db"
+
 asker = Asker(db_name)
 
 if asker.isSQLite3():
