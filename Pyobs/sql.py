@@ -37,6 +37,7 @@ class Model:
 			cur.execute(q,data[vls])	
 			db.commit()
 		time.sleep(1)
+	
 
 	def tbl_name(self,idx):
 		idx = int(idx)
@@ -73,20 +74,27 @@ class Asker(Model):
 					vl = input("%s:" % cl)
 					if vl=="s":
 						break
-					if vl.isnumeric():
-						clms_str += cl+","
-						usr_vl.append(int(vl))
+				if vl.isnumeric():
+					clms_str += cl+","
+					usr_vl.append(int(vl))
 			else:
 				vl = input("%s:" % cl)
 				clms_str += cl+","
 				usr_vl.append(vl)
 		return {"clms":clms_str[:-1],"vls":usr_vl}
 
+	def ask_up_data(self,df):
+		idx_cls = {str(i):c for i,c in enumerate(df.columns)}
+		cl_id = ""
+		while not cl_id.isnumeric():
+			cl_id = input("Which column?\n%s" % idx_cls)
+			print(cl_id in idx_cls)
+				
 	def tbl_info(self,tbl_id):
 		tbl_nam = super().tbl_name(tbl_id)
 		tbl_df = super().tbl_df(tbl_nam)
 		super().disp_sql(tbl_df)
-		print("\tinsert:i")
+		print("\tinsert:i\tupdate:u")
 		return tbl_nam, tbl_df
 
 	def case_insert(self,tbl_df, tbl_nam):

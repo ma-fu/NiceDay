@@ -30,6 +30,12 @@ while order !="q":
 		order = tbl_id
 		data = asker.case_insert(tbl_df, tbl_nam)
 		asker.confirm_ins(data)
+	
+	if order=="u":
+		order = tbl_id
+		asker.ask_up_data(tbl_df)
+		pass
+		#ask data
 
 	# Usr value not in tble menu
 	if order not in tbl_ids:
