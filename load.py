@@ -33,7 +33,7 @@ while order !="q":
 	
 	if order=="u":
 		order = tbl_id
-		asker.ask_up_data(tbl_df)
+		asker.ask_data_plus(tbl_df)
 		pass
 		#ask data
 

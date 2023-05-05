@@ -83,13 +83,21 @@ class Asker(Model):
 				usr_vl.append(vl)
 		return {"clms":clms_str[:-1],"vls":usr_vl}
 
-	def ask_up_data(self,df):
+#
+	def ask_data_plus(self,df):
 		idx_cls = {str(i):c for i,c in enumerate(df.columns)}
 		cl_id = ""
 		while not cl_id.isnumeric():
 			cl_id = input("Which column?\n%s" % idx_cls)
-			print(cl_id in idx_cls)
-				
+			if cl_id in idx_cls:
+				cl = idx_cls[cl_id]
+				if df[cl].dtypes=="int64":
+					pass
+	#update %s set %s=%s+%s
+	#update %s set %s=%s+%s where %s in (%s)
+	#table column where
+	
+
 	def tbl_info(self,tbl_id):
 		tbl_nam = super().tbl_name(tbl_id)
 		tbl_df = super().tbl_df(tbl_nam)
@@ -101,7 +109,7 @@ class Asker(Model):
 		data = self.ask_ins_data(tbl_df)
 		data["tbl"] = tbl_nam
 		clms,vls,tbl = data 
-		q = "insert into %s(%s) values (%s)" %  (data[tbl],data[clms],data[vls])
+		q = "insert into %s(%s) values (%s)" % (data[tbl],data[clms],data[vls])
 		return data
 		
 	def confirm_ins(self,data):
@@ -111,8 +119,28 @@ class Asker(Model):
 			super().Inserter(data)
 		else:
 			print("Bye")
+
+class Personal(Asker):
+	def refrigerator(self,q):
+		with sqlite3.connect(self.db) as db:
+			cur = db.cursor()
+			cur.execute(q)
+			db.commit()
+			
 		
 if __name__ == "__main__":
-	pass
-	
-	
+	x = Personal("2023.db")
+	tbl = x.tbl_df("refrigerator")
+	x.disp_sql(tbl)
+	stock = input("stock:ex +1 or -1:")
+	where = input("where:ex 1,2,3 or 1:")
+	q = "update refrigerator set stock = stock%s where id in (%s)" % (stock,where)
+	print(q)
+	yn = input("Correct?:y/n")
+	if yn=="y":
+		x.refrigerator(q)
+		time.sleep(0.5)
+		print("done")
+	else:
+		print("Bye")
+
