@@ -31,9 +31,16 @@ while order !="q":
 		data = asker.case_insert(tbl_df, tbl_nam)
 		asker.confirm_ins(data)
 	
-	if order=="u":
+	if order=="p":
 		order = tbl_id
-		asker.ask_data_plus(tbl_df)
+		data = {}
+		data["tbl"] = tbl_nam
+		data["cl"] = asker.ask_int_cl(tbl_df)
+		if not data["cl"]:
+			continue
+		data["vl"] = "+" + input("How much?:")
+		data["whe"] = input("where id:") 
+		q = asker.q_plus_minus(data)
 		pass
 		#ask data
 
