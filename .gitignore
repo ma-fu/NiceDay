@@ -1,6 +1,5 @@
 venv/
 Pyobs/__pycache__/
-Pyobs/.sql.py.swp
 test/
 
 

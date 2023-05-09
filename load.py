@@ -28,21 +28,19 @@ while order !="q":
 	# Insert mode	
 	if order=="i":
 		order = tbl_id
-		data = asker.case_insert(tbl_df, tbl_nam)
-		asker.confirm_ins(data)
+		q,vls = asker.case_insert(tbl_df, tbl_nam)
+		asker.confirm_exe(q,vls)
 	
 	if order=="p":
 		order = tbl_id
-		data = {}
-		data["tbl"] = tbl_nam
-		data["cl"] = asker.ask_int_cl(tbl_df)
-		if not data["cl"]:
-			continue
-		data["vl"] = "+" + input("How much?:")
-		data["whe"] = input("where id:") 
-		q = asker.q_plus_minus(data)
-		pass
+		q,v = asker.case_plus_minus(tbl_df,tbl_nam)
+		asker.confirm_exe(q,v)
 		#ask data
+
+	if order=="m":
+		order=tbl_id
+		q,v = asker.case_plus_minus(tbl_df,tbl_nam,"-")
+		asker.confirm_exe(q,v)
 
 	# Usr value not in tble menu
 	if order not in tbl_ids:

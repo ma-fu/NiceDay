@@ -16,11 +16,15 @@ class Source:
 		b16 = b"SQLite format 3\x00"
 		return header == b16
 
-	def Executer(self,q):
+	def Executer(self,q,v=False):
 		with sqlite3.connect(self.db) as db:
 			cur = db.cursor()
-			cur.execute(q)
+			if v:
+				cur.execute(q,v)
+			else:
+				cur.execute(q)
 			db.commit()
+		time.sleep(1)
 	
 	def df_maker(self,q):
 		with sqlite3.connect(self.db) as db:
@@ -37,15 +41,6 @@ class Source:
 		q = "select * from %s" % (tbl_name)
 		return self.df_maker(q)
 
-	def Inserter(self,data):
-		data["esc"] = re.sub("[\w|\d]*[^,]","?",data["clms"])
-		q = "insert into %(tbl)s(%(clms)s) values (%(esc)s)" %  (data)
-		with sqlite3.connect(self.db) as db:
-			cur = db.cursor()
-			cur.execute(q,data["vls"])	
-			db.commit()
-		time.sleep(1)
-	
 	def q_plus_minus(self,data):
 		q = "update %(tbl)s set %(cl)s = %(cl)s"\
 		"%(vl)s where id in (%(whe)s)" % data
@@ -83,6 +78,29 @@ class Source:
 		else:
 			return False
 
+	def merge_data(self,df,cls,vls):
+		data = list(map(lambda cl,vl:int(vl) if self.is_cl_int(df,cl) else vl,cls,vls))
+		cls = ",".join(cls)
+		data = {"cls":cls,"vls":data}
+		return data
+	
+	def plc_hldr(self,data):
+		ph = ",".join(list(map(lambda x: "?",data)))
+		return ph
+
+	def q_insert(self,data):
+		q = "insert into %(tbl)s(%(cls)s) values (%(ph)s)" % data
+		return q
+
+	def q_plus(self,data):
+		q = "update %(t)s set %(c)s where id in (%(w)s)" % data
+		return q
+
+	def plus_minus_cls(self,cls,p="+"):
+		x = ",".join(list(map(lambda d: "%(d)s=%(d)s%(p)s?" % {"d":d,"p":p},cls)))
+		return x
+
+
 class Asker(Source):
 
 	def ask_num_loop(self,ask):
@@ -99,45 +117,20 @@ class Asker(Source):
 				break
 		return idx
 	
-	def ask_ins_data(self,df):
-		clms_str = ""
-		usr_vl = [] 
-		for cl in df.columns:
-			vl = "" 
-			if df[cl].dtypes=="int64":
-				print("\tNumber\ts:skip")
-				while not vl.isnumeric():
-					vl = input("%s:" % cl)
-					if vl=="s":
-						break
-				if vl.isnumeric():
-					clms_str += cl+","
-					usr_vl.append(int(vl))
-			else:
-				vl = input("%s:" % cl)
-				clms_str += cl+","
-				usr_vl.append(vl)
-		return {"clms":clms_str[:-1],"vls":usr_vl}
-	
 	def ask_which_cls(self,df):
 		id_cls = super().dic_id_cls(df)
 		print("\t".join(["%s:%s" % (k,v) for k,v in id_cls.items()]))
-		usr = input("specify id 1 or 1,2,3:")
+		usr = input("Column id:")
 		usr = usr.split(",")
 		cls = [id_cls[n] for n in usr if n in id_cls]
 		return cls
 
-	def ask_vls(self):
-		vls = input("ex 1a or 1,a,3:")
-		return vls.split(",")
+	def ask_where_id(self):
+		return input("Where id:")
 
-	def merge_clvl(self,df,cls,vls):
-		data = dict(map(lambda cl,vl:(cl,int(vl)) if self.is_cl_int(df,cl) else (cl,vl),cls,vls))
-		return data
-	
-	def plc_hldr(self,data):
-		ph = list(map(lambda x: "?",data))
-		return ph
+	def ask_vls(self):
+		vls = input("Values:")
+		return vls.split(",")
 
 	def ask_int_cl(self,df):
 		idx_cls = super().dic_id_cls(df)
@@ -157,34 +150,50 @@ class Asker(Source):
 		tbl_nam = super().tbl_name(tbl_id)
 		tbl_df = super().tbl_df(tbl_nam)
 		super().disp_sql(tbl_df)
-		print("\tinsert:i\tplus:p")
+		print("\tinsert:i +:p -:m")
 		return tbl_nam, tbl_df
 
-	def case_insert(self,tbl_df, tbl_nam):
-		data = self.ask_ins_data(tbl_df)
-		data["tbl"] = tbl_nam
-		clms,vls,tbl = data 
-		q = "insert into %s(%s) values (%s)" % (data[tbl],data[clms],data[vls])
-		return data
-		
-	def confirm_ins(self,data):
+
+	def case_insert(self,df,tbl):
+		cls = self.ask_which_cls(df)
+		vls = self.ask_vls()
+		data = self.merge_data(df,cls,vls)
+		ph = self.plc_hldr(cls)
+		data["tbl"] = tbl
+		data["ph"] = ph
+		q = self.q_insert(data)
+		return q,data["vls"]
+
+	def case_plus_minus(self,df,tbl,p="+"):
+		cls = self.plus_minus_cls(self.ask_which_cls(df),p)
+		vls = self.ask_vls()
+		wid = self.ask_where_id()
+		data = {"t":tbl,"c":cls,"w":wid}
+		q = self.q_plus(data)
+		return q,vls
+
+	def confirm_exe(self,q,vls):
 		yn = input("Would you like to save?(y/n)")
 		if yn =="y":
 			print("Saving")
-			super().Inserter(data)
+			super().Executer(q,vls)
 		else:
 			print("Bye")
 
 		
 if __name__ == "__main__":
 	asker = Asker("2023.db")
-	df = asker.tbl_df("Refrigerator")
-	cls = asker.ask_which_cls(df)
+	tbl = "Refrigerator"
+	df = asker.tbl_df(tbl)
+
+	cls = asker.plus_minus_cls(asker.ask_which_cls(df))
 	vls = asker.ask_vls()
-	data = asker.merge_clvl(df,cls,vls)
-	ph = asker.plc_hldr(data)
-	ph = ",".join(ph)
-	print(ph)
+	wid = asker.ask_where_id()
+	data = {"t":tbl,"c":cls,"v":vls,"w":wid}
+	q = asker.q_plus(data)
+	
+	print(q)
+
 
 
 
