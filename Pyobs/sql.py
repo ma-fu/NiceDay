@@ -119,23 +119,23 @@ class Asker(Source):
 	
 	def ask_which_cls(self,df):
 		id_cls = super().dic_id_cls(df)
-		print("\t".join(["%s:%s" % (k,v) for k,v in id_cls.items()]))
-		usr = input("Column id:")
+		print("\t"+"\t".join(["%s:%s" % (k,v) for k,v in id_cls.items()]))
+		usr = input("\t\t\tColumn id:")
 		usr = usr.split(",")
 		cls = [id_cls[n] for n in usr if n in id_cls]
 		return cls
 
 	def ask_where_id(self):
-		return input("Where id:")
+		return input("\t\t\tWhere id:")
 
 	def ask_vls(self):
-		vls = input("Values:")
+		vls = input("\t\t\tValues:")
 		return vls.split(",")
 
 	def ask_int_cl(self,df):
 		idx_cls = super().dic_id_cls(df)
 		data = {}
-		ask = "Which column?\n%s:" % idx_cls
+		ask = "Which column?\n\t%s:" % idx_cls
 		cl_id = self.ask_num_loop(ask)
 		cl = super().is_in_dic(cl_id,idx_cls)
 		if cl:
@@ -150,7 +150,7 @@ class Asker(Source):
 		tbl_nam = super().tbl_name(tbl_id)
 		tbl_df = super().tbl_df(tbl_nam)
 		super().disp_sql(tbl_df)
-		print("\tinsert:i +:p -:m")
+		print("\tinsert:i\t+:p\t-:m")
 		return tbl_nam, tbl_df
 
 
