@@ -42,6 +42,10 @@ while order !="q":
 		q,v = asker.case_plus_minus(tbl_df,tbl_nam,"-")
 		asker.confirm_exe(q,v)
 
+	if order=="n":
+		q,v = asker.case_new_tbl()
+		asker.confirm_exe(q,v)
+
 	# Usr value not in tble menu
 	if order not in tbl_ids:
 		tbl_id = asker.ask_tbl_id(tbl_ids) 
@@ -53,6 +57,7 @@ while order !="q":
 		tbl_nam,tbl_df = asker.tbl_info(tbl_id)
 		
 	print("\ttbls:t\texit:q\ttbl_id:")
+	print("\tnew:n")
 	order = input("Continue?")
 
 exit()

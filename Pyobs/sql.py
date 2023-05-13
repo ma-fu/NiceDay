@@ -96,6 +96,10 @@ class Source:
 		q = "update %(t)s set %(c)s where id in (%(w)s)" % data
 		return q
 
+	def q_new_tbl(self,data):
+####
+		q = "create table %(t)s"
+
 	def plus_minus_cls(self,cls,p="+"):
 		x = ",".join(list(map(lambda d: "%(d)s=%(d)s%(p)s?" % {"d":d,"p":p},cls)))
 		return x
@@ -152,6 +156,18 @@ class Asker(Source):
 		super().disp_sql(tbl_df)
 		print("\tinsert:i\t+:p\t-:m")
 		return tbl_nam, tbl_df
+
+	def ask_new_tbl(self):
+		data = {}
+		tbl = input("type new tbl name:")
+		idx = input("You need idx?:")
+		if idx:
+			data["Id"] = "Id integer primary key autoincrement,"
+		else:
+			data["Id"] = False
+
+	def case_new_tbl(self):
+		pass
 
 
 	def case_insert(self,df,tbl):
