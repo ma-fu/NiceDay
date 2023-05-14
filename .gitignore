@@ -1,5 +1,7 @@
 venv/
 Pyobs/__pycache__/
 test/
+package-lock.json
+node_modules
 
 

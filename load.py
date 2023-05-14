@@ -43,8 +43,8 @@ while order !="q":
 		asker.confirm_exe(q,v)
 
 	if order=="n":
-		q,v = asker.case_new_tbl()
-		asker.confirm_exe(q,v)
+		q = asker.case_new_tbl()
+		asker.confirm_exe(q)
 
 	# Usr value not in tble menu
 	if order not in tbl_ids:

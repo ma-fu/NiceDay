@@ -97,8 +97,10 @@ class Source:
 		return q
 
 	def q_new_tbl(self,data):
-####
-		q = "create table %(t)s"
+		if data["y"]:
+			data["c"] = "id integer primary key autoincrement,"+data["c"]
+		q = "create table %(t)s(%(c)s)" % data
+		return q
 
 	def plus_minus_cls(self,cls,p="+"):
 		x = ",".join(list(map(lambda d: "%(d)s=%(d)s%(p)s?" % {"d":d,"p":p},cls)))
@@ -167,7 +169,12 @@ class Asker(Source):
 			data["Id"] = False
 
 	def case_new_tbl(self):
-		pass
+		data = {}
+		data["t"] =	input("new table name :") 
+		data["y"] = input("Do you need idx?(y/n) :")
+		data["c"] = input("Columns and types :")
+		q = self.q_new_tbl(data)
+		return q
 
 
 	def case_insert(self,df,tbl):
@@ -188,11 +195,14 @@ class Asker(Source):
 		q = self.q_plus(data)
 		return q,vls
 
-	def confirm_exe(self,q,vls):
+	def confirm_exe(self,q,vls=False):
 		yn = input("Would you like to save?(y/n)")
 		if yn =="y":
 			print("Saving")
-			super().Executer(q,vls)
+			if vls:
+				super().Executer(q,vls)
+			else:
+				self.Executer(q)
 		else:
 			print("Bye")
 
