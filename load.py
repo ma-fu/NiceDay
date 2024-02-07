@@ -1,63 +1,64 @@
 from Pyobs.sql import Asker
 	
-ask_file  = "Your Sqlite3 here:"
-db_name = input(ask_file)
+ASK_FILE  = "Your Sqlite3 here:"
+DEFAULT = "2023.db"
+DB_PATH = input(ASK_FILE)
 
-if db_name=="":
-	db_name = "2023.db"
+if DB_PATH=="":
+	DB_PATH = DEFAULT
 
-asker = Asker(db_name)
+asker = Asker(DB_PATH)
 
 if asker.isSQLite3():
-	print("Successfuly connect %s!" % (db_name))
+	print(f"Successfuly connect {DB_PATH}!")
 else:
-	print("%s is not SQLite3" % (db_name))
+	print(f"{DB_PATH} is not SQLite3")
 	exit()
 
-tbls_df = asker.tbls_df()
+TABLES_DF = asker.tbls_df()
 
 # Display table data or some operations 
-tbl_ids = list(map(str, tbls_df.index))
-order = None
-tbl_id = None
-while order !="q":
+TABLE_IDS = list(map(str, TABLES_DF.index))
+ORDER = None
+TABLE_ID = None
+while ORDER !="q":
 	# First time or typed 't'
-	if order is None or order=="t":
-		asker.disp_sql(tbls_df,idx=True)
+	if ORDER is None or ORDER=="t":
+		asker.disp_sql(TABLES_DF,idx=True)
 
 	# Insert mode	
-	if order=="i":
-		order = tbl_id
-		q,vls = asker.case_insert(tbl_df, tbl_nam)
-		asker.confirm_exe(q,vls)
+	if ORDER=="i":
+		ORDER = TABLE_ID
+		QUERY,VALUES = asker.case_insert(TABLE_DF, TABLE_NAME)
+		asker.confirm_exe(QUERY,VALUES)
 	
-	if order=="p":
-		order = tbl_id
-		q,v = asker.case_plus_minus(tbl_df,tbl_nam)
-		asker.confirm_exe(q,v)
+	if ORDER=="p":
+		ORDER = TABLE_ID
+		QUERY,VALUE = asker.case_plus_minus(TABLE_DF,TABLE_NAME)
+		asker.confirm_exe(QUERY,VALUE)
 		#ask data
 
-	if order=="m":
-		order=tbl_id
-		q,v = asker.case_plus_minus(tbl_df,tbl_nam,"-")
-		asker.confirm_exe(q,v)
+	if ORDER=="m":
+		ORDER=TABLE_ID
+		QUERY,VALUE = asker.case_plus_minus(TABLE_DF,TABLE_NAME,"-")
+		asker.confirm_exe(QUERY,VALUE)
 
-	if order=="n":
-		q = asker.case_new_tbl()
-		asker.confirm_exe(q)
+	if ORDER=="n":
+		QUERY = asker.case_new_tbl()
+		asker.confirm_exe(QUERY)
 
 	# Usr value not in tble menu
-	if order not in tbl_ids:
-		tbl_id = asker.ask_tbl_id(tbl_ids) 
+	if ORDER not in TABLE_IDS:
+		TABLE_ID = asker.ask_tbl_id(TABLE_IDS) 
 	else:
-		tbl_id = order
+		TABLE_ID = ORDER
 	
 	# Prompt which tbl
-	if tbl_id != "q":
-		tbl_nam,tbl_df = asker.tbl_info(tbl_id)
+	if TABLE_ID != "q":
+		TABLE_NAME,TABLE_DF = asker.tbl_info(TABLE_ID)
 		
-	print("\ttbls:t\texit:q\ttbl_id:")
+	print("\ttbls:t\texit:q\tTABLE_ID:")
 	print("\tnew:n")
-	order = input("Continue?")
+	ORDER = input("Continue?")
 
 exit()

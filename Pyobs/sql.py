@@ -2,7 +2,7 @@ import sqlite3, pandas as pd, re, time
 from tabulate import tabulate as tabu
 from os.path import isfile, getsize
 
-class Source:
+class Base:
 	def __init__(self, db):
 		self.db = db
 
@@ -107,7 +107,7 @@ class Source:
 		return x
 
 
-class Asker(Source):
+class Asker(Base):
 
 	def ask_num_loop(self,ask):
 		num = ""
